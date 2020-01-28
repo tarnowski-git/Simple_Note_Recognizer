@@ -44,6 +44,7 @@ class MainApplication(QtWidgets.QMainWindow):
         self.left = 50
         self.width = 700
         self.height = 600
+        self.iconName = "icons//logo_uksw.ico"
         # setup UI
         self.configureUI()
         self.createWidgets()
@@ -54,7 +55,7 @@ class MainApplication(QtWidgets.QMainWindow):
         """Setting general configurations of the application"""
         self.setWindowTitle(self.title)
         self.setGeometry(self.top, self.left, self.width, self.height)
-        self.setWindowIcon(QtGui.QIcon("icons//logo_uksw.ico"))
+        self.setWindowIcon(QtGui.QIcon(self.iconName))
         self.statusBar().showMessage('Ready')
 
     def createWidgets(self):
@@ -71,10 +72,15 @@ class MainApplication(QtWidgets.QMainWindow):
         self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
         self.stopButton.setIconSize(QtCore.QSize(32, 32))
 
-        self.recognizeButton = QtWidgets.QPushButton("Recognize a note")
-        # self.recognizeButton.setStyleSheet("background-color: red")
+        self.recognizeButton = QtWidgets.QPushButton("Recognize a Note")
+        self.recognizeButton.setMinimumHeight(40)
+        self.recognizeButton.setStyleSheet("background-color: red; font: bold")
 
         self.resultMusicNote = QtWidgets.QLabel("Music Note")
+        self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
+        self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
+        self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.resultMusicNote.setLineWidth(3)
 
         # create a waveform
         self.plotCanvas = PowerSpectralDenisity(self)
@@ -134,7 +140,7 @@ class MainApplication(QtWidgets.QMainWindow):
         """Show information about project and author."""
         aboutMessage = QtWidgets.QMessageBox()
         aboutMessage.setWindowTitle(self.title)
-        aboutMessage.setWindowIcon(QtGui.QIcon("icons//logo_uksw.ico"))
+        aboutMessage.setWindowIcon(QtGui.QIcon(self.iconName))
         aboutMessage.setText(self.INFO)
         aboutMessage.setIcon(QtWidgets.QMessageBox.Information)
         aboutMessage.exec_()
@@ -143,6 +149,7 @@ class MainApplication(QtWidgets.QMainWindow):
         versionMessage = QtWidgets.QMessageBox()
         versionMessage.setWindowTitle("Version")
         versionMessage.setText("Python 3.7.5 with PyQt5\nfor Windows")
+        versionMessage.setWindowIcon(QtGui.QIcon(self.iconName))
         versionMessage.setIcon(QtWidgets.QMessageBox.Information)
         versionMessage.exec_()
 
@@ -154,13 +161,12 @@ class MainApplication(QtWidgets.QMainWindow):
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralWidget)
         # setup horizontal container for buttons
         horizontalBox = QtWidgets.QHBoxLayout()
-        # horizontalBox.setSpacing(100)
-        # horizontalBox.insertSpacing(0, 30)
         horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
-        horizontalBox.addWidget(self.playButton, 32)
-        horizontalBox.addWidget(self.stopButton, 32)
-        horizontalBox.addWidget(self.recognizeButton)
+        horizontalBox.setSpacing(50)
+        horizontalBox.addWidget(self.playButton)
+        horizontalBox.addWidget(self.stopButton)
         horizontalBox.addWidget(self.resultMusicNote)
+        horizontalBox.addWidget(self.recognizeButton)
         self.mainLayout.addLayout(horizontalBox)
         self.mainLayout.addWidget(self.plotCanvas)
         self.setCentralWidget(self.centralWidget)
