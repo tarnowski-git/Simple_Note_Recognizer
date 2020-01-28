@@ -57,6 +57,7 @@ class MainApplication(QtWidgets.QMainWindow):
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.setWindowIcon(QtGui.QIcon(self.iconName))
         self.statusBar().showMessage('Ready')
+        self.statusBar().show()
 
     def createWidgets(self):
         """Creating the widgets of the application"""
