@@ -26,7 +26,6 @@ class PowerSpectralDenisity(FigureCanvasQTAgg):
         self.draw()
 
 
-
 class MainApplication(QtWidgets.QMainWindow):
 
     INFO = (
@@ -43,11 +42,13 @@ class MainApplication(QtWidgets.QMainWindow):
         self.title = "Music Note Recognizer"
         self.top = 50
         self.left = 50
-        self.width = 500
-        self.height = 500
+        self.width = 700
+        self.height = 600
         # setup UI
         self.configureUI()
         self.createWidgets()
+        self.setupLayout()
+        self.setButtonConnections()
 
     def configureUI(self):
         """Setting general configurations of the application"""
@@ -61,8 +62,22 @@ class MainApplication(QtWidgets.QMainWindow):
         # create the Menubar
         self.addMenuBar()
 
+        # create buttons
+        self.playButton = QtWidgets.QPushButton()
+        self.playButton.setIcon(QtGui.QIcon("assets\\play.png"))
+        self.playButton.setIconSize(QtCore.QSize(32, 32))
+
+        self.stopButton = QtWidgets.QPushButton()
+        self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
+        self.stopButton.setIconSize(QtCore.QSize(32, 32))
+
+        self.recognizeButton = QtWidgets.QPushButton("Recognize a note")
+        # self.recognizeButton.setStyleSheet("background-color: red")
+
+        self.resultMusicNote = QtWidgets.QLabel("Music Note")
+
         # create a waveform
-        self.canvas = PowerSpectralDenisity(self)
+        self.plotCanvas = PowerSpectralDenisity(self)
 
     def addMenuBar(self):
         # create the Menu Bar from QMainWindow
@@ -103,12 +118,16 @@ class MainApplication(QtWidgets.QMainWindow):
         #  getcwd() takes a current working directory of a process
         fileName = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open File", getcwd(), "Wave files (*.wav)")
+
         # get only the file path from fileName tuple
         self.filePath = fileName[0]
+
         # split dir path and filename
         head_tail = path.split(self.filePath)
+
         # get the tail from the head_tail tuple
         self.fileName = head_tail[1]
+
         print(self.fileName)
 
     def showAbout(self):
@@ -123,17 +142,43 @@ class MainApplication(QtWidgets.QMainWindow):
     def showVersion(self):
         versionMessage = QtWidgets.QMessageBox()
         versionMessage.setWindowTitle("Version")
-        versionMessage.setText("Python 3.7.5 with PyQt5")
+        versionMessage.setText("Python 3.7.5 with PyQt5\nfor Windows")
         versionMessage.setIcon(QtWidgets.QMessageBox.Information)
         versionMessage.exec_()
 
-    def addPlot(self):
+    def setupLayout(self):
+        # Set the central widget of the Window. Widget will expand
+        # to take up all the space in the window by defaul
+        self.centralWidget = QtWidgets.QWidget()
+        # vertical container will be a main layout
+        self.mainLayout = QtWidgets.QVBoxLayout(self.centralWidget)
+        # setup horizontal container for buttons
+        horizontalBox = QtWidgets.QHBoxLayout()
+        # horizontalBox.setSpacing(100)
+        # horizontalBox.insertSpacing(0, 30)
+        horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
+        horizontalBox.addWidget(self.playButton, 32)
+        horizontalBox.addWidget(self.stopButton, 32)
+        horizontalBox.addWidget(self.recognizeButton)
+        horizontalBox.addWidget(self.resultMusicNote)
+        self.mainLayout.addLayout(horizontalBox)
+        self.mainLayout.addWidget(self.plotCanvas)
+        self.setCentralWidget(self.centralWidget)
+
+    def setButtonConnections(self):
         pass
 
 
 # Start program
 if __name__ == '__main__':
+    # You need one (and only one) QApplication instance per application.
+    # Pass in sys.argv to allow command line arguments for your app.
     app = QtWidgets.QApplication(sys.argv)
     window = MainApplication()
+    # IMPORTANT!!!!! Windows are hidden by default.
     window.show()
+    # Start the event loop.
     app.exec()
+
+    # Your application won't reach here until you exit and the event
+    # loop has stopped.
