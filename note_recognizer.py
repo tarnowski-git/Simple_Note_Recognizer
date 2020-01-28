@@ -49,7 +49,6 @@ class MainApplication(QtWidgets.QMainWindow):
         self.configureUI()
         self.createWidgets()
         self.setupLayout()
-        self.setButtonConnections()
 
     def configureUI(self):
         """Setting general configurations of the application"""
@@ -61,35 +60,17 @@ class MainApplication(QtWidgets.QMainWindow):
         """Creating the widgets of the application"""
         # create the Menubar
         self.addMenuBar()
-
         # create buttons
-        self.playButton = QtWidgets.QPushButton("Play")
-        self.playButton.setIcon(QtGui.QIcon("assets\\play.png"))
-        self.playButton.setIconSize(QtCore.QSize(32, 32))
-
-        self.stopButton = QtWidgets.QPushButton("Stop")
-        self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
-        self.stopButton.setIconSize(QtCore.QSize(32, 32))
-
-        self.recognizeButton = QtWidgets.QPushButton("Recognize a Note")
-        self.recognizeButton.setMinimumHeight(40)
-        self.recognizeButton.setFont(QtGui.QFont("Arial", 10))
-        self.recognizeButton.setStyleSheet("background-color: red; font: bold")
-
-        self.resultMusicNote = QtWidgets.QLabel("Music Note")
-        self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
-        self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
-        self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.resultMusicNote.setLineWidth(3)
-
-        # create a waveform
+        self.addButtons()
+        # create the waveform
         self.plotCanvas = PowerSpectralDenisity(self)
-        # create a status bar
+        # create the status bar
         self.addStatusBar()
 
     def addMenuBar(self):
         # create the Menu Bar from QMainWindow
         menuBar = self.menuBar()
+
         # create Root Menus
         fileMenu = menuBar.addMenu("&File")
         helpMenu = menuBar.addMenu("&Help")
@@ -117,10 +98,44 @@ class MainApplication(QtWidgets.QMainWindow):
         aboutAction.triggered.connect(self.showAbout)
         versionAction.triggered.connect(self.showVersion)
 
-    def closeApplication(self):
-        """Close the application."""
-        QtWidgets.qApp.quit()
+    def addButtons(self):
+        """Creating the buttons on the top bar"""
+        # play button
+        self.playButton = QtWidgets.QPushButton("Play")
+        self.playButton.setIcon(QtGui.QIcon("assets\\play.png"))
+        self.playButton.setIconSize(QtCore.QSize(32, 32))
 
+        # stop button
+        self.stopButton = QtWidgets.QPushButton("Stop")
+        self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
+        self.stopButton.setIconSize(QtCore.QSize(32, 32))
+
+        # regognize buttton
+        self.recognizeButton = QtWidgets.QPushButton("Recognize a Note")
+        self.recognizeButton.setMinimumHeight(40)
+        self.recognizeButton.setFont(QtGui.QFont("Arial", 10))
+        self.recognizeButton.setStyleSheet("background-color: red; font: bold")
+
+        # music note label
+        self.resultMusicNote = QtWidgets.QLabel()
+        self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
+        self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
+        self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.resultMusicNote.setLineWidth(3)
+
+        # events
+        self.playButton.clicked.connect(self.playSound)
+        self.stopButton.clicked.connect(self.stopSound)
+        self.recognizeButton.clicked.connect(self.generatePlot)
+
+    def addStatusBar(self):
+        # create a label
+        self.status = QtWidgets.QLabel()
+        self.status.setText("Ready")
+        # set label as
+        self.statusBar().addWidget(self.status)
+
+    # ======== Menu Bar function ========
     def getFilename(self):
         """Function gets a file path to extract and save it to file name."""
         #  getcwd() takes a current working directory of a process
@@ -136,7 +151,12 @@ class MainApplication(QtWidgets.QMainWindow):
         # get the tail from the head_tail tuple
         self.fileName = head_tail[1]
 
-        print(self.fileName)
+        # change the statusbar
+        self.status.setText("Selected File: {}".format(self.fileName))
+
+    def closeApplication(self):
+        """Close the application."""
+        QtWidgets.qApp.quit()
 
     def showAbout(self):
         """Show information about project and author."""
@@ -158,9 +178,9 @@ class MainApplication(QtWidgets.QMainWindow):
     def setupLayout(self):
         # Set the central widget of the Window. Widget will expand
         # to take up all the space in the window by defaul
-        self.centralWidget = QtWidgets.QWidget()
+        centralWidget = QtWidgets.QWidget()
         # vertical container will be a main layout
-        self.mainLayout = QtWidgets.QVBoxLayout(self.centralWidget)
+        mainLayout = QtWidgets.QVBoxLayout(centralWidget)
         # setup horizontal container for buttons
         horizontalBox = QtWidgets.QHBoxLayout()
         horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
@@ -169,17 +189,18 @@ class MainApplication(QtWidgets.QMainWindow):
         horizontalBox.addWidget(self.stopButton)
         horizontalBox.addWidget(self.resultMusicNote)
         horizontalBox.addWidget(self.recognizeButton)
-        self.mainLayout.addLayout(horizontalBox)
-        self.mainLayout.addWidget(self.plotCanvas)
-        self.setCentralWidget(self.centralWidget)
+        mainLayout.addLayout(horizontalBox)
+        mainLayout.addWidget(self.plotCanvas)
+        self.setCentralWidget(centralWidget)
 
-    def addStatusBar(self):
-        # set statusbar
-        self.status = QtWidgets.QLabel()
-        self.status.setText("Ready")
-        self.statusBar().addWidget(self.status)
+    # ======== Menu Bar function ========
+    def playSound(self):
+        pass
 
-    def setButtonConnections(self):
+    def stopSound(self):
+        pass
+
+    def generatePlot(self):
         pass
 
 
