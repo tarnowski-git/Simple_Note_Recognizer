@@ -1,6 +1,30 @@
 import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+import numpy as np
 from os import getcwd, path
+
+
+class PowerSpectralDenisity(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, xval=np.zeros(1000), yval=[0] * 1000):
+        self.xval = xval
+        self.yval = yval
+        # create the Figure
+        fig = Figure(figsize=(5, 5), dpi=100)   # figsize - in inch
+        FigureCanvasQTAgg.__init__(self, fig)
+        # create the axes
+        self.axes = fig.add_subplot(111)
+        self.axes.grid(True)
+        self.axes.set_title("Power Spectral Density")
+        self.axes.set_ylabel("Power Density")
+        self.axes.set_xlabel("Frequency")
+        self.axes.set_xlim(left=0)
+        self.setParent(parent)
+        self.axes.plot(self.xval, self.yval)
+        self.draw()
+
 
 
 class MainApplication(QtWidgets.QMainWindow):
@@ -19,8 +43,8 @@ class MainApplication(QtWidgets.QMainWindow):
         self.title = "Music Note Recognizer"
         self.top = 50
         self.left = 50
-        self.width = 400
-        self.height = 400
+        self.width = 500
+        self.height = 500
         # setup UI
         self.configureUI()
         self.createWidgets()
@@ -36,6 +60,9 @@ class MainApplication(QtWidgets.QMainWindow):
         """Creating the widgets of the application"""
         # create the Menubar
         self.addMenuBar()
+
+        # create a waveform
+        self.canvas = PowerSpectralDenisity(self)
 
     def addMenuBar(self):
         # create the Menu Bar from QMainWindow
@@ -85,7 +112,7 @@ class MainApplication(QtWidgets.QMainWindow):
         print(self.fileName)
 
     def showAbout(self):
-        """Show popup information"""
+        """Show information about project and author."""
         aboutMessage = QtWidgets.QMessageBox()
         aboutMessage.setWindowTitle(self.title)
         aboutMessage.setWindowIcon(QtGui.QIcon("icons//logo_uksw.ico"))
@@ -99,6 +126,9 @@ class MainApplication(QtWidgets.QMainWindow):
         versionMessage.setText("Python 3.7.5 with PyQt5")
         versionMessage.setIcon(QtWidgets.QMessageBox.Information)
         versionMessage.exec_()
+
+    def addPlot(self):
+        pass
 
 
 # Start program
