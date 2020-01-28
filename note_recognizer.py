@@ -4,6 +4,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import numpy as np
 from os import getcwd, path
+import winsound
 
 
 class PowerSpectralDenisity(FigureCanvasQTAgg):
@@ -45,6 +46,7 @@ class MainApplication(QtWidgets.QMainWindow):
         self.width = 700
         self.height = 600
         self.iconName = "icons//logo_uksw.ico"
+        self.filePath = None
         # setup UI
         self.configureUI()
         self.createWidgets()
@@ -141,18 +143,19 @@ class MainApplication(QtWidgets.QMainWindow):
         #  getcwd() takes a current working directory of a process
         fileName = QtWidgets.QFileDialog.getOpenFileName(
             self, "Open File", getcwd(), "Wave files (*.wav)")
+        # if file was choosen
+        if fileName[0] != "":
+            # get only the file path from fileName tuple
+            self.filePath = fileName[0]
 
-        # get only the file path from fileName tuple
-        self.filePath = fileName[0]
+            # split dir path and filename
+            head_tail = path.split(self.filePath)
 
-        # split dir path and filename
-        head_tail = path.split(self.filePath)
+            # get the tail from the head_tail tuple
+            self.fileName = head_tail[1]
 
-        # get the tail from the head_tail tuple
-        self.fileName = head_tail[1]
-
-        # change the statusbar
-        self.status.setText("Selected File: {}".format(self.fileName))
+            # change the statusbar
+            self.status.setText("Selected File: {}".format(self.fileName))
 
     def closeApplication(self):
         """Close the application."""
@@ -195,10 +198,19 @@ class MainApplication(QtWidgets.QMainWindow):
 
     # ======== Menu Bar function ========
     def playSound(self):
-        pass
+        """Function working only for Windows"""
+        if self.filePath != None:
+            winsound.PlaySound(self.filePath, winsound.SND_ASYNC)
+        else:
+            errorMessage = QtWidgets.QMessageBox()
+            errorMessage.setIcon(QtWidgets.QMessageBox.Critical)
+            errorMessage.setWindowIcon(QtGui.QIcon(self.iconName))
+            errorMessage.setWindowTitle("File path is wrong")
+            errorMessage.setText("Please choose a WAV file.")
+            errorMessage.exec_()
 
     def stopSound(self):
-        pass
+        winsound.PlaySound(None, winsound.SND_FILENAME)
 
     def generatePlot(self):
         pass
