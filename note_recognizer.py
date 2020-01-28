@@ -56,8 +56,6 @@ class MainApplication(QtWidgets.QMainWindow):
         self.setWindowTitle(self.title)
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.setWindowIcon(QtGui.QIcon(self.iconName))
-        self.statusBar().showMessage('Ready')
-        self.statusBar().show()
 
     def createWidgets(self):
         """Creating the widgets of the application"""
@@ -65,16 +63,17 @@ class MainApplication(QtWidgets.QMainWindow):
         self.addMenuBar()
 
         # create buttons
-        self.playButton = QtWidgets.QPushButton()
+        self.playButton = QtWidgets.QPushButton("Play")
         self.playButton.setIcon(QtGui.QIcon("assets\\play.png"))
         self.playButton.setIconSize(QtCore.QSize(32, 32))
 
-        self.stopButton = QtWidgets.QPushButton()
+        self.stopButton = QtWidgets.QPushButton("Stop")
         self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
         self.stopButton.setIconSize(QtCore.QSize(32, 32))
 
         self.recognizeButton = QtWidgets.QPushButton("Recognize a Note")
         self.recognizeButton.setMinimumHeight(40)
+        self.recognizeButton.setFont(QtGui.QFont("Arial", 10))
         self.recognizeButton.setStyleSheet("background-color: red; font: bold")
 
         self.resultMusicNote = QtWidgets.QLabel("Music Note")
@@ -85,6 +84,8 @@ class MainApplication(QtWidgets.QMainWindow):
 
         # create a waveform
         self.plotCanvas = PowerSpectralDenisity(self)
+        # create a status bar
+        self.addStatusBar()
 
     def addMenuBar(self):
         # create the Menu Bar from QMainWindow
@@ -171,6 +172,12 @@ class MainApplication(QtWidgets.QMainWindow):
         self.mainLayout.addLayout(horizontalBox)
         self.mainLayout.addWidget(self.plotCanvas)
         self.setCentralWidget(self.centralWidget)
+
+    def addStatusBar(self):
+        # set statusbar
+        self.status = QtWidgets.QLabel()
+        self.status.setText("Ready")
+        self.statusBar().addWidget(self.status)
 
     def setButtonConnections(self):
         pass
