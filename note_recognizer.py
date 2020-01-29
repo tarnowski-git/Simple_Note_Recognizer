@@ -2,30 +2,65 @@ import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+from scipy.io import wavfile
+from scipy.fftpack import fft, fftfreq
+import scipy
 import numpy as np
 from os import getcwd, path
 import winsound
+from matplotlib import pyplot as plt
 
 
 class PowerSpectralDenisity(FigureCanvasQTAgg):
+    """Compute and draw a Power Spectral Denisity of wave.
+
+    Parameters
+    ----------
+    `parent` : master widget
+        Represents a widget to act as the parent of the current object
+    `xval` : 1-D array or sequence
+        The number of data points in timeline.
+    `yval` : 1-D array or sequence
+        Array containing wave samples.
+    """
 
     def __init__(self, parent=None, xval=np.zeros(1000), yval=[0] * 1000):
-        self.xval = xval
-        self.yval = yval
+
+        # init variables
+        self.FFTfregs = xval
+        self.FFT = yval
+
         # create the Figure
         fig = Figure(figsize=(5, 5), dpi=100)   # figsize - in inch
         FigureCanvasQTAgg.__init__(self, fig)
+
         # create the axes
         self.axes = fig.add_subplot(111)
         self.axes.grid(True)
-        self.axes.set_title("Power Spectral Density")
+        self.axes.set_title("Power Spectral Density", size=15)
         self.axes.set_ylabel("Power Density")
-        self.axes.set_xlabel("Frequency")
+        self.axes.set_xlabel("Frequency(Hz)")
         self.axes.set_xlim(left=0)
+        self.axes.plot(self.FFTfregs, self.FFT)
+        self.draw()
         self.setParent(parent)
-        self.axes.plot(self.xval, self.yval)
+
+    def plot(self, FFTfregs=None, FFT=None):
+        """Updating a WavePlot Figure instance and drawing plot."""
+        self.FFTfregs = FFTfregs
+        self.FFT = FFT
+        self.axes.clear()
+        self.axes.grid(True)
+        self.axes.set_title("Power Spectral Density", size=15)
+        self.axes.set_ylabel("Power Density")
+        self.axes.set_xlabel("Frequency(Hz)")
+        # set range between searching note values
+        self.axes.set_xlim(left=350, right=800)
+        self.axes.plot(self.FFTfregs, abs(self.FFT))
         self.draw()
 
+    def recognizeNote(self):
+        pass
 
 class MainApplication(QtWidgets.QMainWindow):
 
@@ -196,7 +231,7 @@ class MainApplication(QtWidgets.QMainWindow):
         mainLayout.addWidget(self.plotCanvas)
         self.setCentralWidget(centralWidget)
 
-    # ======== Menu Bar function ========
+    # ======== Buttons function ========
     def playSound(self):
         """Function working only for Windows"""
         if self.filePath != None:
@@ -213,7 +248,55 @@ class MainApplication(QtWidgets.QMainWindow):
         winsound.PlaySound(None, winsound.SND_FILENAME)
 
     def generatePlot(self):
-        pass
+        """Load a file and generate plots."""
+        if self.filePath != None:
+            # open a WAV file
+            samplingFrequency, signalData = wavfile.read(self.filePath)
+
+            # select only one audio track from two channel soundtrack
+            if len(signalData.shape) == 2:
+                signalData = signalData[:, 0]
+
+            # lenth of signal data
+            N = len(signalData)
+
+            # sampling interval in time (T - period)
+            T = 1.0 / samplingFrequency
+
+            # signal duration / signal freq [1/secs]
+            seconds = N / float(samplingFrequency)
+
+            # time vector (array) as scipy arange field / numpy.ndarray
+            time = scipy.arange(0, seconds, T)
+
+            # calculate fourier transform (complex numbers list)
+            FFT = abs(scipy.fft(signalData))
+
+            # you only need half of the fft list (real signal symmetry)
+            FFT_side = FFT[range(N//2)]
+
+            # Discrete Fourier Transform sample frequencies
+            freqs = fftfreq(signalData.size, time[1] - time[0])
+
+            # one side frequency range
+            freqs_side = freqs[range(N//2)]
+
+            # convert array to NumPy array
+            fft_freqs_side = np.array(freqs_side)
+            
+            # plot and draw a function
+            self.plotCanvas.plot(fft_freqs_side, FFT_side)
+
+            # change status bar
+            self.status.setText("Loaded File: {}".format(self.fileName))
+
+        else:
+            errorMessage = QtWidgets.QMessageBox()
+            errorMessage.setIcon(QtWidgets.QMessageBox.Critical)
+            errorMessage.setWindowIcon(QtGui.QIcon(self.iconName))
+            errorMessage.setWindowTitle("File not found")
+            errorMessage.setText("Please choose a WAV file and try again.")
+            errorMessage.exec_()
 
 
 # Start program
