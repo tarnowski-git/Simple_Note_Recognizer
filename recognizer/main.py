@@ -1,12 +1,7 @@
 import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
-import scipy
-from scipy.io import wavfile
-from scipy.fftpack import fft, fftfreq
-import numpy as np
 from os import getcwd, path
 import winsound
-from matplotlib import pyplot as plt
 
 from recognizer.plot import SpectralPlot
 
@@ -210,41 +205,10 @@ class MainApplication(QtWidgets.QMainWindow):
         """Load a file and generate plots."""
         if self.filePath != None:
             # open a WAV file
-            samplingFrequency, signalData = wavfile.read(self.filePath)
-
-            # select only one audio track from two channel soundtrack
-            if len(signalData.shape) == 2:
-                signalData = signalData[:, 0]
-
-            # lenth of signal data
-            N = len(signalData)
-
-            # sampling interval in time (T - period)
-            T = 1.0 / samplingFrequency
-
-            # signal duration / signal freq [1/secs]
-            seconds = N / float(samplingFrequency)
-
-            # time vector (array) as scipy arange field / numpy.ndarray
-            time = scipy.arange(0, seconds, T)
-
-            # calculate fourier transform (complex numbers list)
-            FFT = abs(scipy.fft(signalData))
-
-            # you only need half of the fft list (real signal symmetry)
-            FFT_side = FFT[range(N//2)]
-
-            # Discrete Fourier Transform sample frequencies
-            freqs = fftfreq(signalData.size, time[1] - time[0])
-
-            # one side frequency range
-            freqs_side = freqs[range(N//2)]
-
-            # convert array to NumPy array
-            fft_freqs_side = np.array(freqs_side)
+            self.plotCanvas.open(self.filePath)
 
             # plot and draw a function
-            self.plotCanvas.plot(fft_freqs_side, FFT_side)
+            self.plotCanvas.plot()
 
             # change status bar
             self.status.setText("Loaded File: {}".format(self.fileName))
