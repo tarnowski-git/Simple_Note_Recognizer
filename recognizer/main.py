@@ -96,23 +96,29 @@ class MainApplication(QtWidgets.QMainWindow):
         self.stopButton.setIcon(QtGui.QIcon("assets\\stop.png"))
         self.stopButton.setIconSize(QtCore.QSize(32, 32))
 
+        # music note label
+        self.resultMusicNote = QtWidgets.QLabel("?")
+        self.resultMusicNote.setFont(QtGui.QFont("Arial", 12))
+        self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
+        self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
+        self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.resultMusicNote.setLineWidth(3)
+
         # regognize buttton
         self.recognizeButton = QtWidgets.QPushButton("Recognize a Note")
         self.recognizeButton.setMinimumHeight(40)
         self.recognizeButton.setFont(QtGui.QFont("Arial", 10))
         self.recognizeButton.setStyleSheet("background-color: red; font: bold")
 
-        # music note label
-        self.resultMusicNote = QtWidgets.QLabel()
-        self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
-        self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
-        self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.resultMusicNote.setLineWidth(3)
+        # clear button
+        self.clearButton = QtWidgets.QPushButton("Clear")
+        self.clearButton.setMinimumHeight(40)
 
         # events
         self.playButton.clicked.connect(self.playSound)
         self.stopButton.clicked.connect(self.stopSound)
         self.recognizeButton.clicked.connect(self.generatePlot)
+        self.clearButton.clicked.connect(self.clearPlot)
 
     def addStatusBar(self):
         # create a label
@@ -166,8 +172,10 @@ class MainApplication(QtWidgets.QMainWindow):
         # Set the central widget of the Window. Widget will expand
         # to take up all the space in the window by defaul
         centralWidget = QtWidgets.QWidget()
+
         # vertical container will be a main layout
         mainLayout = QtWidgets.QVBoxLayout(centralWidget)
+
         # setup horizontal container for buttons
         horizontalBox = QtWidgets.QHBoxLayout()
         horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
@@ -176,6 +184,8 @@ class MainApplication(QtWidgets.QMainWindow):
         horizontalBox.addWidget(self.stopButton)
         horizontalBox.addWidget(self.resultMusicNote)
         horizontalBox.addWidget(self.recognizeButton)
+        horizontalBox.addWidget(self.clearButton)
+
         mainLayout.addLayout(horizontalBox)
         mainLayout.addWidget(self.plotCanvas)
         self.setCentralWidget(centralWidget)
@@ -247,6 +257,11 @@ class MainApplication(QtWidgets.QMainWindow):
             errorMessage.setText("Please choose a WAV file and try again.")
             errorMessage.exec_()
 
+    def clearPlot(self):
+        # also clear the plot
+        self.filePath = None
+        self.fileName = None
+        self.status.setText("Ready")
 
 
 def main():
