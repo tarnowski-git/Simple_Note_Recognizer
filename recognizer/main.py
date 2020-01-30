@@ -22,8 +22,8 @@ class MainApplication(QtWidgets.QMainWindow):
         self.title = "Music Note Recognizer"
         self.top = 50
         self.left = 50
-        self.width = 700
-        self.height = 600
+        self.width = 1200
+        self.height = 700
         self.iconName = "icons//logo_uksw.ico"
         self.filePath = None
         # setup UI
@@ -93,7 +93,7 @@ class MainApplication(QtWidgets.QMainWindow):
 
         # music note label
         self.resultMusicNote = QtWidgets.QLabel("?")
-        self.resultMusicNote.setFont(QtGui.QFont("Arial", 12))
+        self.resultMusicNote.setFont(QtGui.QFont("Arial", 9))
         self.resultMusicNote.setAlignment(QtCore.Qt.AlignCenter)
         self.resultMusicNote.setFrameShape(QtWidgets.QFrame.Panel)
         self.resultMusicNote.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -206,10 +206,12 @@ class MainApplication(QtWidgets.QMainWindow):
         if self.filePath != None:
             # open a WAV file
             self.plotCanvas.open(self.filePath)
-
             # plot and draw a function
             self.plotCanvas.plot()
-
+            # take a note from plot
+            musicNote = self.plotCanvas.detectNote()
+            self.resultMusicNote.setText("{} ({} Hz)".format(
+                musicNote["name"], musicNote["frequency"]))
             # change status bar
             self.status.setText("Loaded File: {}".format(self.fileName))
 
@@ -225,6 +227,7 @@ class MainApplication(QtWidgets.QMainWindow):
         self.plotCanvas.cleanAxes()
         self.filePath = None
         self.fileName = None
+        self.resultMusicNote.setText("")
         self.status.setText("Ready")
 
 
