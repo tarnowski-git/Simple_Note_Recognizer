@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 from scipy import arange
 from scipy.io import wavfile
 from scipy.fftpack import fft, fftfreq
-# from matplotlib import pyplot as plt
 
 
 class SpectralPlot(FigureCanvasQTAgg):
@@ -14,13 +13,9 @@ class SpectralPlot(FigureCanvasQTAgg):
     ----------
     `parent` : master widget
         Represents a widget to act as the parent of the current object
-    `xval` : 1-D array or sequence
-        The number of data points in timeline.
-    `yval` : 1-D array or sequence
-        Array containing wave samples.
     """
 
-    def __init__(self, parent=None, xval=np.zeros(1000), yval=[0] * 1000):
+    def __init__(self, parent=None):
         # create the Figure
         fig = Figure(figsize=(12, 5), dpi=100)   # figsize - in inch
         FigureCanvasQTAgg.__init__(self, fig)
@@ -35,7 +30,7 @@ class SpectralPlot(FigureCanvasQTAgg):
         x = [0] * t
         # generate frequency axis
         n = np.size(t)
-        fr = (Fs/2) * np.linspace(0, 1, n/2)
+        fr = (Fs/2) * np.linspace(0, 1, n//2)
         # compute FFT
         X = fft(x)
         X_m = abs(X[0: np.size(fr)])
