@@ -258,7 +258,7 @@ class MainApplication(QtWidgets.QMainWindow):
             errorMessage.exec_()
 
     def clearPlot(self):
-        # also clear the plot
+        self.plotCanvas.cleanAxes()
         self.filePath = None
         self.fileName = None
         self.status.setText("Ready")
