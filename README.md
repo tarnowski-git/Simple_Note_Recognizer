@@ -68,6 +68,6 @@ $ pipenv run python note_recognizer.py
 pyinstaller --hidden-import pkg_resources.py2_warn --onefile --windowed note_recognizer.py
 ```
 
-## [License](https://github.com/tarnowski-git/Simple_Note_Recognizer/blob/master/LICENSE.md)
+## [License](https://github.com/tarnowski-git/Simple_Note_Recognizer/blob/master/LICENSE)
 
 MIT © [Konrad Tarnowski](https://github.com/tarnowski-git)
