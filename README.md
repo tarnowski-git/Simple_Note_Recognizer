@@ -4,7 +4,7 @@ Desktop GUI applications to show the computation of the Discrete Fourier Transfo
 
 The Fourier transform of a musical instrument recording can be used to determine which music note is being performed and whether the instrument is in tuned.
 
-What note the instrument plays can be determined by determining the fundamental frequency of the signal and comparing it with the table describing the fundamental frequencies associated with each note:
+What note the instrument plays can be determined by the fundamental frequency of the signal and comparing it with the table describing the fundamental frequencies associated with each note:
 
 | Note | Frequency (Hz) |
 | :--: | :------------: |
@@ -65,7 +65,7 @@ $ pipenv run python note_recognizer.py
 
 ```
 # Windows
-pyinstaller --onefile --windowed note_recognizer.py
+pyinstaller --hidden-import pkg_resources.py2_warn --onefile --windowed note_recognizer.py
 ```
 
 ## [License](https://github.com/tarnowski-git/Simple_Note_Recognizer/blob/master/LICENSE.md)

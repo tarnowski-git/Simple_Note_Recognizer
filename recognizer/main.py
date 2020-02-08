@@ -163,28 +163,6 @@ class MainApplication(QtWidgets.QMainWindow):
         versionMessage.setIcon(QtWidgets.QMessageBox.Information)
         versionMessage.exec_()
 
-    def setupLayout(self):
-        # Set the central widget of the Window. Widget will expand
-        # to take up all the space in the window by defaul
-        centralWidget = QtWidgets.QWidget()
-
-        # vertical container will be a main layout
-        mainLayout = QtWidgets.QVBoxLayout(centralWidget)
-
-        # setup horizontal container for buttons
-        horizontalBox = QtWidgets.QHBoxLayout()
-        horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
-        horizontalBox.setSpacing(50)
-        horizontalBox.addWidget(self.playButton)
-        horizontalBox.addWidget(self.stopButton)
-        horizontalBox.addWidget(self.resultMusicNote)
-        horizontalBox.addWidget(self.recognizeButton)
-        horizontalBox.addWidget(self.clearButton)
-
-        mainLayout.addLayout(horizontalBox)
-        mainLayout.addWidget(self.plotCanvas)
-        self.setCentralWidget(centralWidget)
-
     # ======== Buttons function ========
     def playSound(self):
         """Function working only for Windows"""
@@ -229,6 +207,29 @@ class MainApplication(QtWidgets.QMainWindow):
         self.fileName = None
         self.resultMusicNote.setText("")
         self.status.setText("Ready")
+
+    # ======== Setup Layout ========
+    def setupLayout(self):
+        # Set the central widget of the Window. Widget will expand
+        # to take up all the space in the window by defaul
+        centralWidget = QtWidgets.QWidget()
+
+        # vertical container will be a main layout
+        mainLayout = QtWidgets.QVBoxLayout(centralWidget)
+
+        # setup horizontal container for buttons
+        horizontalBox = QtWidgets.QHBoxLayout()
+        horizontalBox.setDirection(QtWidgets.QVBoxLayout.LeftToRight)
+        horizontalBox.setSpacing(50)
+        horizontalBox.addWidget(self.playButton)
+        horizontalBox.addWidget(self.stopButton)
+        horizontalBox.addWidget(self.resultMusicNote)
+        horizontalBox.addWidget(self.recognizeButton)
+        horizontalBox.addWidget(self.clearButton)
+
+        mainLayout.addLayout(horizontalBox)
+        mainLayout.addWidget(self.plotCanvas)
+        self.setCentralWidget(centralWidget)
 
 
 def main():
